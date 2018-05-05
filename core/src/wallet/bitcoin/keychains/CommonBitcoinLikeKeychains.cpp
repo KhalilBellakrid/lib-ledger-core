@@ -224,15 +224,6 @@ namespace ledger {
             }
             return Option<std::vector<uint8_t>>(_xpub->derivePublicKey(path));
         }
-
-//        std::string CommonBitcoinLikeKeychains::derive(KeyPurpose purpose, off_t index) {
-//            cout<<"================================"<<endl;
-//            cout<<"CommonBitcoinLikeKeychains::derive"<<endl;
-//            cout<<"================================"<<endl;
-//            //throw make_exception(api::ErrorCode::IMPLEMENTATION_IS_MISSING, "CommonBitcoinLikeKeychains::derive not implemented");
-//            return "";
-//        }
-
     }
 }
 

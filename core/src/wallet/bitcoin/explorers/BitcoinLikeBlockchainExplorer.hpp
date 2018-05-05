@@ -70,7 +70,7 @@ namespace ledger {
                 BigInt value;
                 Option<std::string> address;
                 std::string script;
-
+                std::string time;
                 Output() {};
             };
 
