@@ -2,4 +2,4 @@
 
 cd ledger-core-samples/nodejs
 yarn
-node ledger-core-samples/nodejs/tests/wallet_pool_test.js
+node tests/wallet-pool-test.js
