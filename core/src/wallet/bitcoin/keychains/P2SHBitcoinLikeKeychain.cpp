@@ -1,7 +1,3 @@
-//
-// Created by El Khalil Bellakrid on 30/04/2018.
-//
-
 /*
  *
  * P2SHBitcoinLikeKeychain

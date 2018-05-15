@@ -31,15 +31,11 @@
 #ifndef LEDGER_CORE_P2SHBITCOINLIKEKEYCHAIN_H
 #define LEDGER_CORE_P2SHBITCOINLIKEKEYCHAIN_H
 
-
 #include "CommonBitcoinLikeKeychains.hpp"
-
 #include "../../../collections/DynamicObject.hpp"
 
 namespace ledger {
     namespace core {
-
-
         class P2SHBitcoinLikeKeychain : public CommonBitcoinLikeKeychains {
         public:
             P2SHBitcoinLikeKeychain(const std::shared_ptr<api::DynamicObject> &configuration,
