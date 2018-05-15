@@ -154,12 +154,7 @@ namespace ledger {
                     // The operation has a block, inflate the block
                     Block block;
                     block.hash = row.get<std::string>(11);
-
-#ifdef __linux__
-                    block.height = (uint64_t) row.get<long long int>(12);
-#else
-                    block.height = (uint64_t) row.get<int64_t>(12);
-#endif
+                    block.height = soci::get_number<uint64_t>(row, 12);
                     block.time = row.get<std::chrono::system_clock::time_point>(13);
                     block.currencyName = operation.currencyName;
                     operation.block = Option<Block>(std::move(block));

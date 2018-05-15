@@ -38,10 +38,6 @@
 #include <api/BlockchainObserverEngines.hpp>
 #include <api/SynchronizationEngines.hpp>
 
-
-#include <iostream>
-using namespace std;
-
 //Examples taken from https://github.com/bitcoin/bips/blob/master/bip-0143.mediawiki
 //Serialized signed segwit transactions, first has 2 inputs with witnesses, second has 2 inputs and only one of them has a witness
 const std::vector<std::string> rawSegwitTxs {

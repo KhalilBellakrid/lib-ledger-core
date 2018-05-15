@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+//
+// Created by El Khalil Bellakrid on 30/04/2018.
+//
+
+>>>>>>> rebase-upstream
 /*
  *
  * P2SHBitcoinLikeKeychain
@@ -95,5 +102,7 @@ namespace ledger {
             return getAddressDerivationPath(address.toBase58());
         }
 
+
     }
 }
+

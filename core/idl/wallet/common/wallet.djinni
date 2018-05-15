@@ -228,6 +228,16 @@ TimePeriod = enum {
     week;
     month;
 }
+
+Address = interface +c {
+    getDerivationPath(): optional<string>;
+    toString(): optional<string>;
+    asBitcoinLikeAddress(): optional<BitcoinLikeAddress>;
+
+
+    static parse(address: String): optional<Address>;
+}
+
 #Class representing an account
 Account = interface +c {
     #Key of the synchronization duration time in the synchronize event payload.
@@ -307,6 +317,9 @@ Account = interface +c {
     #Get Last block of blockchain on which account operates
     #@param callback, Callback returning, if getLastBlock succeeds, a Block object
     getLastBlock(callback: Callback<Block>);
+
+    # Get the key used to generate the account
+    getRestoreKey(): string;
 }
 
 #Class representing a wallet

@@ -150,4 +150,7 @@ extern NSString * __nonnull const LGAccountEVNEWOPUID;
  */
 - (void)getLastBlock:(nullable id<LGBlockCallback>)callback;
 
+/** Get the key used to generate the account */
+- (nonnull NSString *)getRestoreKey;
+
 @end
