@@ -235,7 +235,7 @@ Address = interface +c {
     asBitcoinLikeAddress(): optional<BitcoinLikeAddress>;
 
 
-    static parse(address: String): optional<Address>;
+    static parse(address: string): optional<Address>;
 }
 
 #Class representing an account

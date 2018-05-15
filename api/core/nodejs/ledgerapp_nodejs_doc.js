@@ -363,6 +363,13 @@ declare class NJSOperationListCallback
      */
     declare function onCallback(result: ?Array<NJSOperation>, error: ?Error);
 }
+declare class NJSAddress
+{
+    declare function getDerivationPath(): ?string;
+    declare function toString(): ?string;
+    declare function asBitcoinLikeAddress(): ?NJSBitcoinLikeAddress;
+    static declare function parse(address: string): ?NJSAddress;
+}
 /**Class representing an account */
 declare class NJSAccount
 {

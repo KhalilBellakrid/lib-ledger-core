@@ -167,6 +167,8 @@ package object implicits {
     }
     implicit class RichOperationListCallback(val self: OperationListCallback) {
     }
+    implicit class RichAddress(val self: Address) {
+    }
     implicit class RichAccount(val self: Account) {
         def getBalance(): Future[Amount] = {
             val promise = Promise[Amount]()
