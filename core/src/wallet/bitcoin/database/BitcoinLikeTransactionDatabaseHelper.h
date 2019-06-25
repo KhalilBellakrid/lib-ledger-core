@@ -61,6 +61,10 @@ namespace ledger {
                                                   const soci::row& row,
                                                   const std::string &accountUid,
                                                   BitcoinLikeBlockchainExplorerTransaction& out);
+
+            static BitcoinLikeBlockchainExplorerOutput getOutput(soci::session& sql,
+                                                                 const std::string& previousTxHash,
+                                                                 uint64_t outputIndex);
         };
     }
 }

@@ -46,8 +46,12 @@ namespace ledger {
 
         BitcoinLikeTransactionApi::BitcoinLikeTransactionApi(const api::Currency &currency,
                                                              const std::string &keychainEngine,
-                                                             uint64_t currentBlockHeight) :
-                _currency(currency), _keychainEngine(keychainEngine), _currentBlockHeight(currentBlockHeight) {
+                                                             uint64_t currentBlockHeight,
+                                                             const Option<OutputFetcher> &getOutputWithPreviousTxHashAndIndex) :
+                _currency(currency),
+                _keychainEngine(keychainEngine),
+                _currentBlockHeight(currentBlockHeight),
+                _getOutputWithPreviousTxHashAndIndex(getOutputWithPreviousTxHashAndIndex) {
             _version = 1;
             _params = currency.bitcoinLikeNetworkParameters.value();
             _writable = true;
@@ -413,21 +417,30 @@ namespace ledger {
         api::BitcoinLikeTransactionBuilder::parseRawUnsignedTransaction(const api::Currency &currency,
                                                                         const std::vector<uint8_t> &rawTransaction,
                                                                         std::experimental::optional<int32_t> currentBlockHeight) {
-            return BitcoinLikeTransactionApi::parseRawTransaction(currency, rawTransaction, currentBlockHeight, false);
+            auto getOutputFromHashAndIndex = [] (const std::string &txHash, uint64_t index) {
+                BitcoinLikeBlockchainExplorerOutput output;
+                output.transactionHash = txHash;
+                output.index = index;
+                return output;
+            };
+
+            return BitcoinLikeTransactionApi::parseRawTransaction(currency, rawTransaction, currentBlockHeight, false, getOutputFromHashAndIndex);
         }
 
         std::shared_ptr<api::BitcoinLikeTransaction>
         BitcoinLikeTransactionApi::parseRawSignedTransaction(const api::Currency &currency,
                                                              const std::vector<uint8_t> &rawTransaction,
-                                                             std::experimental::optional<int32_t> currentBlockHeight) {
-            return BitcoinLikeTransactionApi::parseRawTransaction(currency, rawTransaction, currentBlockHeight, true);
+                                                             std::experimental::optional<int32_t> currentBlockHeight,
+                                                             const OutputFetcher &getOutputWithPreviousTxHashAndIndex) {
+            return BitcoinLikeTransactionApi::parseRawTransaction(currency, rawTransaction, currentBlockHeight, true, getOutputWithPreviousTxHashAndIndex);
         }
 
         std::shared_ptr<api::BitcoinLikeTransaction>
         BitcoinLikeTransactionApi::parseRawTransaction(const api::Currency &currency,
                                                        const std::vector<uint8_t> &rawTransaction,
                                                        std::experimental::optional<int32_t> currentBlockHeight,
-                                                       bool isSigned) {
+                                                       bool isSigned,
+                                                       const OutputFetcher &getOutputWithPreviousTxHashAndIndex) {
             BytesReader reader(rawTransaction);
             // Parse version
             auto version = reader.readNextLeUint();
@@ -546,6 +559,7 @@ namespace ledger {
                 output.address = address;
                 output.transactionHash = previousTxHash;
                 output.index = outputIndex;
+                output.value = getOutputWithPreviousTxHashAndIndex(output.transactionHash, output.index).value;
                 preparedInputs.emplace_back(BitcoinLikePreparedInput(sequence, address, previousTxHash, outputIndex, pubKeys, output));
             }
 
@@ -700,7 +714,7 @@ namespace ledger {
                                                                 pubKeys,
                                                                 {},
                                                                 preparedInputs[i].address,
-                                                                nullptr,
+                                                                std::make_shared<ledger::core::Amount>(currency, 0, preparedInputs[i].output.value),
                                                                 preparedInputs[i].previousTxHash,
                                                                 preparedInputs[i].outputIndex,
                                                                 scriptSig,

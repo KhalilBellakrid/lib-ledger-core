@@ -70,7 +70,7 @@ namespace ledger {
                 output.script = output_.script;
                 output.transactionHash = output_.transactionHash;
                 output.time = output_.time;
-
+                output.value = output_.value;
             }
         };
 
@@ -78,9 +78,12 @@ namespace ledger {
 
         class BitcoinLikeTransactionApi : public api::BitcoinLikeTransaction {
         public:
+            using OutputFetcher = std::function<BitcoinLikeBlockchainExplorerOutput (const std::string &, uint64_t)>;
+
             explicit BitcoinLikeTransactionApi(const api::Currency &currency,
                                                const std::string &keychainEngine = api::KeychainEngines::BIP32_P2PKH,
-                                               uint64_t currentBlockHeight = 0);
+                                               uint64_t currentBlockHeight = 0,
+                                               const Option<OutputFetcher> &getOutputWithPreviousTxHashAndIndex = Option<OutputFetcher>());
 
             explicit BitcoinLikeTransactionApi(const std::shared_ptr<OperationApi> &operation);
 
@@ -127,11 +130,13 @@ namespace ledger {
             static std::shared_ptr<api::BitcoinLikeTransaction> parseRawTransaction(const api::Currency &currency,
                                                                                     const std::vector<uint8_t> &rawTransaction,
                                                                                     std::experimental::optional<int32_t> currentBlockHeight,
-                                                                                    bool isSigned);
+                                                                                    bool isSigned,
+                                                                                    const OutputFetcher &getOutputWithPreviousTxHashAndIndex);
 
             static std::shared_ptr<api::BitcoinLikeTransaction> parseRawSignedTransaction(const api::Currency &currency,
                                                                                           const std::vector<uint8_t> &rawTransaction,
-                                                                                          std::experimental::optional<int32_t> currentBlockHeight);
+                                                                                          std::experimental::optional<int32_t> currentBlockHeight,
+                                                                                          const OutputFetcher &getOutputWithPreviousTxHashAndIndex);
 
             static api::EstimatedSize estimateSize(std::size_t inputCount,
                                                    std::size_t outputCount,
@@ -166,6 +171,7 @@ namespace ledger {
             bool _writable;
             std::string _keychainEngine;
             uint64_t _currentBlockHeight;
+            Option<OutputFetcher> _getOutputWithPreviousTxHashAndIndex;
         };
     }
 }

@@ -560,7 +560,12 @@ namespace ledger {
                     soci::session sql(self->getWallet()->getDatabase()->getPool());
                     auto lastBlockHeight = getLastBlockFromDB(sql, self->getWallet()->getCurrency().name);
 
-                    auto tx = BitcoinLikeTransactionApi::parseRawSignedTransaction(self->getWallet()->getCurrency(), transaction, lastBlockHeight);
+                    // Method to get outputs from previous tx hash and previous tx index
+                    auto getOutputFromHashAndIndex = [&] (const std::string &txHash, uint64_t index) {
+                        return BitcoinLikeTransactionDatabaseHelper::getOutput(sql, txHash, index);
+                    };
+
+                    auto tx = BitcoinLikeTransactionApi::parseRawSignedTransaction(self->getWallet()->getCurrency(), transaction, lastBlockHeight, getOutputFromHashAndIndex);
 
                     //Get a BitcoinLikeBlockchainExplorerTransaction from a BitcoinLikeTransaction
                     BitcoinLikeBlockchainExplorerTransaction txExplorer;

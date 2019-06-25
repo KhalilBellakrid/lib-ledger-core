@@ -85,9 +85,11 @@ extern const std::string TX_2;
 extern const std::string TX_3;
 extern const std::string TX_4;
 
+using OutputFetcher = std::function<BitcoinLikeBlockchainExplorerOutput (const std::string &, uint64_t)>;
 
 class BaseFixture : public ::testing::Test {
 public:
+    static OutputFetcher getOutputWithPreviousTxHashAndIndex;
     void SetUp() override;
     void TearDown() override;
     std::shared_ptr<WalletPool> newDefaultPool(const std::string &poolName = "my_ppol", const std::string &password = "test");

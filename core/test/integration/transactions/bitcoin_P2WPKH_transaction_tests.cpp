@@ -67,22 +67,50 @@ TEST_F(BitcoinMakeP2WPKHTransaction, CreateStandardP2WPKHWithOneOutput) {
     // TODO: In the meantime ...
     // Reference: https://github.com/bitcoin/bitcoin/blob/master/src/test/data/tx_valid.json
     auto mockTx = "0100000000010100010000000000000000000000000000000000000000000000000000000000000000000000ffffffff01e8030000000000001976a9144c9c3dfac4207d5d8cb89df5722cb3d712385e3f88ac02483045022100cfb07164b36ba64c1b1e8c7720a56ad64d96f6ef332d3d37f9cb3c96477dc44502200a464cd7a9cf94cd70f66ce4f4f0625ef650052c7afcfe29d7d7e01830ff91ed012103596d3451025c19dbbdeb932d6bf8bfb4ad499b95b6f88db8899efac102e5fc7100000000";
-    auto parsedTx = BitcoinLikeTransactionApi::parseRawSignedTransaction(wallet->getCurrency(), hex::toByteArray(mockTx), 0);
+    auto parsedTx = BitcoinLikeTransactionApi::parseRawSignedTransaction(wallet->getCurrency(), hex::toByteArray(mockTx), 0, BaseFixture::getOutputWithPreviousTxHashAndIndex);
     EXPECT_EQ(mockTx, hex::toString(parsedTx->serialize()));
 }
 
 TEST_F(BitcoinMakeP2WPKHTransaction, ParseSignedTx) {
     auto hash = "c3dd55c86d02ad9d4b0e748c219fd15b79f21c6d5e38f5fe84a453a7f9e37494";
     auto sender = "bc1qh4kl0a0a3d7su8udc2rn62f8w939prqpl34z86";
+    int64_t sendAmount = 100000, receiveAmount = 10000, changeAmount = 77800;
     std::vector<std::string> receivers {"bc1qh4kl0a0a3d7su8udc2rn62f8w939prqpl34z86", "bc1qry3crfssh8w6guajms7upclgqsfac4fs4g7nwj"};
 
+    // Previous outputs from 7cc3a814d73b52de679c872e838da3b5069ebc4c8d0397c700cb24c228283054
+    auto previousTxHash = "7cc3a814d73b52de679c872e838da3b5069ebc4c8d0397c700cb24c228283054";
+
+    // For test purposes, we are only interested into first output in previous tx
+    auto previousSender0 = "bc1qh4kl0a0a3d7su8udc2rn62f8w939prqpl34z86";
+    auto previousScript0 = "0014bd6df7f5fd8b7d0e1f8dc2873d29277162508c01";
+    auto previousDate0 = "2019-05-27T10:06:06Z";
+    BitcoinLikeBlockchainExplorerOutput previousOutput0;
+    previousOutput0.index = 0;
+    previousOutput0.transactionHash = previousTxHash;
+    previousOutput0.value = BigInt::fromScalar(sendAmount);
+    previousOutput0.address = previousSender0;
+    previousOutput0.script =  previousScript0;
+    previousOutput0.time = previousDate0;
+    auto getOutputWithPreviousTxHashAndIndex = [=] (const std::string &hash, uint64_t index) {
+        if (previousOutput0.index == index) {
+            return previousOutput0;
+        }
+        BitcoinLikeBlockchainExplorerOutput out;
+        out.index = index;
+        out.transactionHash = hash;
+        return out;
+    };
+
     auto signedTx = "0100000000010154302828c224cb00c797038d4cbc9e06b5a38d832e879c67de523bd714a8c37c0000000000ffffff00021027000000000000160014bd6df7f5fd8b7d0e1f8dc2873d29277162508c01e82f010000000000160014192381a610b9dda473b2dc3dc0e3e80413dc553002483045022100dc57387b377550476a04f3147d915e57e396ab5ce41f8629f0aebd0f9a472876022025920a6a9d80aa6b31aedd10dfbd16d0b2eb8e449a93b70059e0cec7ac2a40ca012102fbba978d75f5fc4e7987840b78033e0e4797c7776c070037422616e622f8e6dc00000000";
-    auto parsedTx = BitcoinLikeTransactionApi::parseRawSignedTransaction(wallet->getCurrency(), hex::toByteArray(signedTx), 0);
+    auto parsedTx = BitcoinLikeTransactionApi::parseRawSignedTransaction(wallet->getCurrency(), hex::toByteArray(signedTx), 0, getOutputWithPreviousTxHashAndIndex);
     EXPECT_EQ(signedTx, hex::toString(parsedTx->serialize()));
     EXPECT_EQ(parsedTx->getHash(), hash);
     EXPECT_GT(parsedTx->getInputs().size(), 0);
     EXPECT_EQ(parsedTx->getInputs()[0]->getAddress().value_or(""), sender);
+    EXPECT_EQ(parsedTx->getInputs()[0]->getValue()->toLong(), sendAmount);
     EXPECT_GT(parsedTx->getOutputs().size(), 0);
     EXPECT_EQ(parsedTx->getOutputs()[0]->getAddress().value_or(""), receivers[0]);
+    EXPECT_EQ(parsedTx->getOutputs()[0]->getValue()->toLong(), receiveAmount);
     EXPECT_EQ(parsedTx->getOutputs()[1]->getAddress().value_or(""), receivers[1]);
+    EXPECT_EQ(parsedTx->getOutputs()[1]->getValue()->toLong(), changeAmount);
 }

@@ -237,5 +237,24 @@ namespace ledger {
             return true;
         }
 
+        BitcoinLikeBlockchainExplorerOutput BitcoinLikeTransactionDatabaseHelper::getOutput(soci::session& sql,
+                                                                                            const std::string& previousTxHash,
+                                                                                            uint64_t outputIndex) {
+            // Fetch outputs
+            rowset<soci::row> outputRows = (sql.prepare << "SELECT idx, amount, script, address "
+                    "FROM bitcoin_outputs WHERE transaction_hash = :hash AND idx = :idx ",
+                    use(previousTxHash),
+                    use(outputIndex)
+            );
+            BitcoinLikeBlockchainExplorerOutput output;
+            for (auto& outputRow : outputRows) {
+                output.index = (uint64_t) outputRow.get<int>(0);
+                output.value.assignScalar(outputRow.get<long long>(1));
+                output.script = outputRow.get<std::string>(2);
+                output.address = outputRow.get<Option<std::string>>(3);
+            }
+            return output;
+        }
+
     }
 }
