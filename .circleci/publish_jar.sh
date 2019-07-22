@@ -20,7 +20,7 @@ cd $JAR_BUILD_DIR
 if [[ $LIB_VERSION == *"-rc-"* ]]; then
 	export JAR_VERSION="$LIB_VERSION"-SNAPSHOT
 else
-	export JAR_VERSION=$LIB_VERSION
+	export JAR_VERSION=test-ci
 fi
 JAR_VERSION=$JAR_VERSION sbt publish
 
