@@ -237,7 +237,7 @@ DatabaseBackend = interface +c {
 
     # Create an instance of SQLite3 database.
     # @return DatabaseBackend object
-    static getSqlite3Backend(): DatabaseBackend;
+    static getSqlite3Backend(connectionPoolSize: optional<i32>): DatabaseBackend;
 
     # Create a database backend instance from the given DatabaseEngine implementation.
     static createBackendFromEngine(engine: DatabaseEngine): DatabaseBackend;

@@ -1,4 +1,13 @@
-## 3.2.1 (on-going)
+## 4.0.0 (on-going)
+
+- Add a parameter on `DatabaseBackend::getSqlite3Backend` to configure the connection pool
+size,
+- Add compilation flags to activate multi-threading mode (should guarentee that no connection
+is shared between 2 or more threads),
+- Set `PRAGMA busy_timeout=1000` which will queue writes from different threads and wait
+ for at most `1000ms`, this is an ok consideration since we don't have a high rate of
+ writes. 
+## 3.2.1
 
 - Execution context changes:
 	- Using pool's ThreadPoolExecutionContext in wallets and accounts for long running tasks,

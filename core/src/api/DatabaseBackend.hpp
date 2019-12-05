@@ -4,6 +4,7 @@
 #ifndef DJINNI_GENERATED_DATABASEBACKEND_HPP
 #define DJINNI_GENERATED_DATABASEBACKEND_HPP
 
+#include "../utils/optional.hpp"
 #include <cstdint>
 #include <memory>
 #ifndef LIBCORE_EXPORT
@@ -45,7 +46,7 @@ public:
      * Create an instance of SQLite3 database.
      * @return DatabaseBackend object
      */
-    static std::shared_ptr<DatabaseBackend> getSqlite3Backend();
+    static std::shared_ptr<DatabaseBackend> getSqlite3Backend(std::experimental::optional<int32_t> connectionPoolSize);
 
     /** Create a database backend instance from the given DatabaseEngine implementation. */
     static std::shared_ptr<DatabaseBackend> createBackendFromEngine(const std::shared_ptr<DatabaseEngine> & engine);

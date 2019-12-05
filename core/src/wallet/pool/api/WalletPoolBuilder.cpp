@@ -34,7 +34,7 @@
 namespace ledger { namespace core {
 
         WalletPoolBuilder::WalletPoolBuilder() {
-            _backend = api::DatabaseBackend::getSqlite3Backend();
+            _backend = api::DatabaseBackend::getSqlite3Backend(optional<int32_t>());
             _configuration = nullptr;
         }
 

@@ -35,11 +35,19 @@ using namespace soci;
 
 namespace ledger {
     namespace core {
-        SQLite3Backend::SQLite3Backend() : DatabaseBackend() {
-        }
+        SQLite3Backend::SQLite3Backend() :
+                DatabaseBackend(),
+                _connectionPoolSize(1)
+        {}
+
+        SQLite3Backend::SQLite3Backend(int32_t connectionPoolSize) :
+                DatabaseBackend(),
+                _connectionPoolSize(connectionPoolSize)
+        {}
+
 
         int32_t SQLite3Backend::getConnectionPoolSize() {
-            return 1;
+            return _connectionPoolSize;
         }
 
         void SQLite3Backend::init(const std::shared_ptr<ledger::core::api::PathResolver> &resolver,
@@ -49,6 +57,8 @@ namespace ledger {
             _dbResolvedPath = resolver->resolveDatabasePath(dbName);
             setPassword(password, session);
             session << "PRAGMA foreign_keys = ON";
+            //https://www.sqlite.org/pragma.html#pragma_busy_timeout
+            session << "PRAGMA busy_timeout = 1000";
         }
 
         void SQLite3Backend::setPassword(const std::string &password,

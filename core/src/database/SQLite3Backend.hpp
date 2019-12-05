@@ -40,6 +40,7 @@ namespace ledger {
      class SQLite3Backend : public DatabaseBackend {
      public:
          SQLite3Backend();
+         SQLite3Backend(int32_t connectionPoolSize);
          int32_t getConnectionPoolSize() override;
 
          void init(const std::shared_ptr<api::PathResolver> &resolver,
@@ -57,6 +58,7 @@ namespace ledger {
      private:
          // Resolved path to db
          std::string _dbResolvedPath;
+         int32_t _connectionPoolSize;
      };
  }
 }

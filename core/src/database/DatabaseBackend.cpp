@@ -31,13 +31,14 @@
 #include "DatabaseBackend.hpp"
 #include "SQLite3Backend.hpp"
 #include <api/DatabaseEngine.hpp>
+#include <utils/optional.hpp>
 #include "ProxyBackend.hpp"
 
 namespace ledger {
     namespace core {
 
-        std::shared_ptr<api::DatabaseBackend> api::DatabaseBackend::getSqlite3Backend() {
-            return std::make_shared<SQLite3Backend>();
+        std::shared_ptr<api::DatabaseBackend> api::DatabaseBackend::getSqlite3Backend(optional<int32_t> connectionPoolSize) {
+            return std::make_shared<SQLite3Backend>(connectionPoolSize.value_or(1));
         }
 
         std::shared_ptr<api::DatabaseBackend> api::DatabaseBackend::createBackendFromEngine(
