@@ -8,6 +8,7 @@ echo ">>>>>>> GETTING CIRCLE_BRANCH : $CIRCLE_BRANCH"
 echo "========> Install basic config"
 brew update
 brew install wget
+brew install python3
 
 echo "========> Install Java"
 brew cask install java8
